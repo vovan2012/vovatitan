@@ -1,0 +1,151 @@
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException, Depends
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from moviepy.editor import VideoFileClip
+import os
+import uuid
+import shutil
+
+app = FastAPI()
+
+# Каталог для хранения видеофайлов
+VIDEO_DIR = "uploaded_videos"
+if not os.path.exists(VIDEO_DIR):
+    os.makedirs(VIDEO_DIR)
+
+# Каталог для хранения миниатюр
+THUMBNAILS_DIR = "thumbnails"
+if not os.path.exists(THUMBNAILS_DIR):
+    os.makedirs(THUMBNAILS_DIR)
+
+@app.post("/upload-video/")
+async def upload_video(file: UploadFile = File(...)):
+    """Endpoint для загрузки видеофайла."""
+    # Проверка расширения файла
+    allowed_extensions = {".mp4", ".mov", ".avi", ".mkv"}
+    file_extension = os.path.splitext(file.filename)[1].lower()
+    
+    if file_extension not in allowed_extensions:
+        raise HTTPException(
+            status_code=400,
+            detail="Неподдерживаемый формат файла. Поддерживаются: MP4, MOV, AVI, MKV"
+        )
+
+    # Генерируем уникальное имя файла
+    new_filename = f"{uuid.uuid4()}{file_extension}"
+    file_path = os.path.join(VIDEO_DIR, new_filename)
+
+    # Сохраняем файл
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Ошибка сохранения файла: {str(e)}")
+
+    # Генерация миниатюры
+    thumbnail_url = None
+    try:
+        clip = VideoFileClip(file_path)
+        thumbnail_filename = f"{os.path.splitext(new_filename)[0]}.png"
+        thumbnail_path = os.path.join(THUMBNAILS_DIR, thumbnail_filename)
+        clip.save_frame(thumbnail_path, t=1)  # Кадр на 1-й секунде
+        clip.close()
+        thumbnail_url = f"/static/thumbnails/{thumbnail_filename}"
+    except Exception as e:
+        print(f"Ошибка генерации миниатюры: {e}")
+        # Можно задать URL по умолчанию для отсутствующей миниатюры
+        # thumbnail_url = "/static/default-thumbnail.png"
+
+    return JSONResponse({
+        "message": "Видео успешно загружено",
+        "filename": new_filename,
+        "file_url": f"/static/videos/{new_filename}",
+        "thumbnail_url": thumbnail_url
+    })
+
+@app.post("/edit-video/")
+async def edit_video(
+    filename: str = Form(...),
+    start_time: float = Form(0.0),
+    end_time: float = Form(...),
+    new_filename: str = Form(None)
+):
+    """Endpoint для редактирования видео (обрезка)."""
+    original_path = os.pathjoin(VIDEO_DIR, filename)
+
+    if not os.path.exists(original_path):
+        raise HTTPException(status_code=404, detail="Видеофайл не найден")
+
+    if start_time >= end_time:
+        raise HTTPException(status_code=400, detail="Время начала должно быть меньше времени конца")
+
+    # Определяем имя нового файла
+    if new_filename:
+        # Проверяем, что у нового имени есть расширение
+        if not os.path.splitext(new_filename)[1]:
+            file_extension = os.path.splitext(filename)[1]
+            new_filename = f"{os.path.splitext(new_filename)[0]}{file_extension}"
+    else:
+        # Генерируем новое имя, если не указано
+        file_extension = os.path.splitext(filename)[1]
+        new_filename = f"{uuid.uuid4()}_edited{file_extension}"
+
+    output_path = os.pathjoin(VIDEO_DIR, new_filename)
+
+    try:
+        clip = VideoFileClip(original_path)
+        # Обрезаем видео
+        edited_clip = clip.subclip(start_time, end_time)
+        # Сохраняем отредактированное видео
+        edited_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+        clip.close()
+        edited_clip.close()
+    except Exception as e:
+        if "codec" in str(e).lower():
+            raise HTTPException(
+                status_code=500,
+                detail="Ошибка кодирования видео. Убедитесь, что FFmpeg установлен и доступен."
+            )
+        raise HTTPException(status_code=500, detail=f"Ошибка редактирования видео: {str(e)}")
+
+    return JSONResponse({
+        "message": "Видео успешно отредактировано",
+        "new_filename": new_filename,
+        "new_file_url": f"/static/videos/{new_filename}"
+    })
+
+@app.get("/get-videos/")
+async def get_videos():
+    """Endpoint для получения списка загруженных видео."""
+    videos = []
+    for filename in os.listdir(VIDEO_DIR):
+        if filename.endswith((".mp4", ".mov", ".avi", ".mkv")):
+            video_path = os.pathjoin(VIDEO_DIR, filename)
+            thumbnail_filename = f"{os.path.splitext(filename)[0]}.png"
+            thumbnail_path = os.pathjoin(THUMBNAILS_DIR, thumbnail_filename)
+            videos.append({
+                "filename": filename,
+                "url": f"/static/videos/{filename}",
+                "thumbnail_url": (
+                    f"/static/thumbnails/{thumbnail_filename}"
+                    if os.path.exists(thumbnail_path) else None
+                )
+            })
+    return JSONResponse(videos)
+
+# Монтирование статических файлов
+app.mount("/static/videos", StaticFiles(directory=VIDEO_DIR), name="videos")
+app.mount("/static/thumbnails", StaticFiles(directory=THUMBNAILS_DIR), name="thumbnails")
+
+# Информация о сервисе
+@app.get("/")
+async def root():
+    return {
+        "message": "Video Editor API",
+        "endpoints": {
+            "upload": "/upload-video/",
+            "edit": "/edit-video/",
+            "list": "/get-videos/"
+        },
+        "documentation": "/docs"
+    }
