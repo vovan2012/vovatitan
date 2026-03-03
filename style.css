@@ -1,0 +1,326 @@
+/* Основные стили. */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Более современный и приятный шрифт */
+    margin: 0;
+    padding: 0;
+    background-color: #0b0918; /* Темно-синий, почти черный фон */
+    color: #e0e0e0; /* Светло-серый текст */
+    line-height: 1.7;
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 25px; /* Увеличим отступы */
+}
+
+header {
+    text-align: center;
+    padding: 50px 0; /* Увеличим padding */
+    background: linear-gradient(135deg, #2c0f5e 0%, #0b0918 100%); /* Градиент в шапке */
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    margin-bottom: 40px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); /* Улучшенная тень */
+    position: relative; /* Для позиционирования кнопки */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 3.2em;
+    letter-spacing: 3px;
+    text-shadow: 0 3px 10px rgba(0, 123, 255, 0.4); /* Нежное свечение */
+}
+
+header p {
+    font-size: 1.3em;
+    color: #b0b0b0;
+    margin-top: 10px;
+    position: relative; /* Для ::after */
+    z-index: 1; /* Убедимся, что текст поверх кнопки */
+}
+
+/* Кнопка "Premium" в шапке */
+.premium-banner {
+    display: inline-block;
+    background-color: #ffdd00;
+    color: #0b0918;
+    padding: 8px 18px;
+    border-radius: 25px;
+    margin-left: 20px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 221, 0, 0.4);
+}
+
+.premium-banner:hover {
+    background-color: #ffee88;
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 221, 0, 0.6);
+}
+
+main {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px; /* Больше расстояния между блоками */
+    margin-bottom: 50px;
+}
+
+section {
+    background: rgba(44, 15, 94, 0.5); /* Полупрозрачный фон секций */
+    backdrop-filter: blur(8px); /* Эффект размытия фона */
+    -webkit-backdrop-filter: blur(8px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+    transition: transform 0.5s cubic-bezier(0.28, 0.8, 0.32, 1),
+                box-shadow 0.5s cubic-bezier(0.28, 0.8, 0.32, 1);
+}
+
+section:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 35px 70px rgba(0, 0, 0, 0.9);
+}
+
+h2 {
+    text-align: center;
+    margin-top: 0;
+    font-size: 2.3em;
+    color: #00c6ff; /* Яркий голубой для подзаголовков */
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0, 198, 255, 0.3);
+}
+
+/* Галерея видео */
+.video-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.video-item {
+    cursor: pointer;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.5s cubic-bezier(0.28, 0.8, 0.32, 1),
+                box-shadow 0.5s cubic-bezier(0.28, 0.8, 0.32, 1);
+    background: linear-gradient(135deg, rgba(40, 20, 90, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+    padding: 15px;
+}
+
+.video-item:hover {
+    transform: scale(1.07);
+    box-shadow: 0 0 25px rgba(0, 198, 255, 0.6); /* Более яркое свечение */
+}
+
+.video-item img {
+    width: 100%;
+    height: 170px; /* Чуть больше высота */
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease;
+}
+
+.video-item:hover img {
+    transform: scale(1.05); /* Небольшое увеличение картинки при наведении */
+}
+
+.video-item p {
+    font-size: 0.95em;
+    color: #c0c0c0;
+    margin-bottom: 0;
+    padding: 0 5px; /* Небольшие отступы для текста */
+}
+
+.video-player-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+#main-video-player {
+    width: 100%;
+    max-width: 768px; /* Оптимальная ширина */
+    height: auto;
+    border-radius: 15px;
+    border: 5px solid #00c6ff; /* Яркая голубая рамка */
+    box-shadow: 0 20px 50px rgba(0, 198, 255, 0.3); /* Свечение */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Кнопка поддержки — акцент на плавность */
+.donate-button {
+    display: inline-block;
+    background: linear-gradient(315deg, #00c6ff 0%, #0b132b 100%); /* Новый градиент */
+    color: white;
+    padding: 18px 45px; /* Размер кнопки */
+    text-decoration: none;
+    border-radius: 40px; /* Максимальная скругленность */
+    font-size: 1.4em;
+    font-weight: 600;
+    transition: background 0.6s cubic-bezier(0.28, 0.8, 0.32, 1), /* Плавная смена градиента */
+                transform 0.4s cubic-bezier(0.28, 0.8, 0.32, 1),
+                box-shadow 0.4s cubic-bezier(0.28, 0.8, 0.32, 1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    border: none; /* Убираем границу */
+}
+
+.donate-button:hover {
+    background: linear-gradient(315deg, #0b132b 0%, #00c6ff 100%); /* Обратный градиент */
+    transform: translateY(-10px) scale(1.08); /* Более выраженный эффект */
+    box-shadow: 0 25px 60px rgba(0, 198, 255, 0.4); /* Ярче свечение */
+}
+
+footer {
+    text-align: center;
+    padding: 40px 0;
+    font-size: 0.95em;
+    color: #888888;
+}
+
+/* --- Стили для Premium раздела --- */
+.premium-section {
+    background: linear-gradient(135deg, rgba(120, 50, 200, 0.6) 0%, rgba(40, 20, 90, 0.7) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    transition: transform 0.5s ease-out, box-shadow 0.5s ease-out, opacity 0.5s ease-out;
+    opacity: 0; /* Изначально скрыто */
+    display: none; /* Скрываем по умолчанию */
+    transform: translateY(20px); /* Начальное смещение для анимации */
+    margin-top: 30px; /* Отступ сверху */
+}
+
+.premium-section.visible { /* Класс для показа с анимацией */
+    display: block !important; /* Переопределяем display */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.premium-section h2 {
+    color: #e0a0ff; /* Более нежный фиолетовый */
+    text-shadow: 0 2px 15px rgba(224, 160, 255, 0.5);
+}
+
+.features-list h3 {
+    font-size: 1.6em;
+    margin-bottom: 15px;
+    color: #00c6ff;
+}
+
+.features-list ul {
+    list-style: disc inside;
+    padding-left: 20px;
+}
+
+.features-list li {
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.pricing {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.2); /* Разделитель */
+}
+
+.price {
+    font-size: 1.8em;
+    color: #ffdd00; /* Золотистый цвет для цены */
+    margin-bottom: 20px;
+}
+
+.price strong {
+    font-size: 1.3em; /* Выделяем число */
+}
+
+/* Кнопка Upgrade */
+.upgrade-button {
+    display: inline-block;
+    background: linear-gradient(315deg, #ffdd00 0%, #e0a0ff 100%); /* Золото-фиолетовый градиент */
+    color: #0b0918; /* Темный текст на кнопке */
+    padding: 18px 50px;
+    text-decoration: none;
+    border-radius: 40px;
+    font-size: 1.4em;
+    font-weight: 700;
+    transition: background 0.7s ease-out, transform 0.4s ease-out, box-shadow 0.4s ease-out;
+    box-shadow: 0 10px 30px rgba(255, 221, 0, 0.4);
+    cursor: pointer;
+    border: none;
+}
+
+.upgrade-button:hover {
+    background: linear-gradient(315deg, #e0a0ff 0%, #ffdd00 100%); /* Обратный градиент */
+    transform: translateY(-12px) scale(1.1);
+    box-shadow: 0 30px 70px rgba(224, 160, 255, 0.5);
+}
+
+/* Медиа-запросы для адаптивности */
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2.5em;
+    }
+    header p {
+        font-size: 1.1em;
+    }
+    .premium-banner {
+        display: none; /* Скрываем баннер на узких экранах */
+    }
+    main {
+        grid-template-columns: 1fr; /* Один столбец на маленьких экранах */
+        gap: 30px;
+    }
+    section {
+        padding: 30px;
+    }
+    h2 {
+        font-size: 2em;
+    }
+    #main-video-player {
+        max-width: 100%;
+    }
+    .donate-button, .upgrade-button {
+        padding: 15px 35px;
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 30px 0;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+    header h1 {
+        font-size: 2em;
+        letter-spacing: 1px;
+    }
+    section {
+        padding: 25px;
+    }
+    h2 {
+        font-size: 1.8em;
+        margin-bottom: 20px;
+    }
+    .video-item {
+        padding: 10px;
+    }
+    .video-item img {
+        height: 150px;
+    }
+    .donate-button, .upgrade-button {
+        width: 90%;
+        padding: 12px 0;
+        font-size: 1.1em;
+    }
+}
